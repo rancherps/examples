@@ -1,0 +1,14 @@
+vsphere_server        = "vsphere.local"
+vsphere_password      = "changeme"
+vsphere_resource_pool = "esxi01.local/Resources"
+vsphere_datacenter    = "int"
+vsphere_datastore     = "ds01"
+vsphere_network       = "vmGuests"
+
+rancher_hostname   = "rancher.local"
+rancher_access_key = "token-123"
+rancher_secret_key = "123456changeme"
+
+num_control = "2"
+num_etcd    = "3"
+num_worker  = "3"
