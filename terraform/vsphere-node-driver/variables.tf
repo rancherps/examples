@@ -88,6 +88,11 @@ variable "rancher_vip" {
   default     = "192.168.20.215"
 }
 
+variable "rancher_fqdn" {
+  description = "FQDN for Rancher Server.  Should resolve to the value of rancher_vip"
+  default = "rancher.192.168.20.215.dnsify.me"
+}
+
 variable "rancher_memory" {
   description = "How much memory to allocate to Rancher Server instances"
   default     = 8192

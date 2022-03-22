@@ -123,7 +123,7 @@ resource "helm_release" "rancher" {
 
   set {
     name  = "hostname"
-    value = "rancher.${var.rancher_vip}.dnsify.me"
+    value = var.rancher_fqdn
   }
 
   set {
@@ -143,27 +143,6 @@ resource "helm_release" "rancher" {
   ]
 }
 
-#resource "null_resource" "wait_for_rancher" {
-#  provisioner "local-exec" {
-#    command = <<EOF
-#while [ "$${resp}" != pong ]; do
-#  resp=$(curl -sSk -m 2 --insecure "https://$${RANCHER_HOSTNAME}/ping")
-#  echo "Rancher response: $${resp}"
-#  if [ "$${resp}" != "pong" ]; then
-#    sleep 10
-#  fi
-#done
-#EOF
-#
-#    environment = {
-#      RANCHER_HOSTNAME = "rancher.${var.rancher_vip}.dnsify.me"
-#    }
-#  }
-#  depends_on = [
-#    helm_release.rancher
-#  ]
-#}
-
 resource "rancher2_bootstrap" "admin" {
   provider         = rancher2.bootstrap
   initial_password = var.initial_password
@@ -174,35 +153,21 @@ resource "rancher2_bootstrap" "admin" {
   ]
 }
 
-# Enable monitoring for the 'local' cluster
-#
-#resource "null_resource" "enable_cluster_monitoring" {
-#  depends_on = [null_resource.wait_for_rancher]
-#  provisioner "local-exec" {
-#    command = <<-EOF
-#    curl --insecure -su "${rancher2_token.rancher-token.access_key}:${rancher2_token.rancher-token.secret_key}" -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' \
-#    -d '{"answers":{"exporter-node.enabled":"true", "exporter-node.resources.limits.memory":"400Mi", "exporter-node.ports.metrics.port":"9796", "operator.resources.limits.memory":"1000Mi", "prometheus.resources.core.limits.memory":"2000Mi"}, "version":null}' \
-#    'https://rancher.${var.rancher_vip}.dnsify.me/v3/clusters/local?action=enableMonitoring'
-#    EOF
-#  }
-#  count = var.enable_monitoring ? 1 : 0
-#}
-#
-#resource "rancher2_auth_config_activedirectory" "activedirectory" {
-#  servers                         = var.ad_server
-#  tls                             = false
-#  port                            = 389
-#  service_account_username        = var.ad_username
-#  service_account_password        = var.ad_password
-#  test_username                   = var.ad_username
-#  test_password                   = var.ad_password
-#  default_login_domain            = var.ad_default_login_domain
-#  user_search_base                = var.ad_user_search_base
-#  group_search_base               = var.ad_group_search_base
-#  nested_group_membership_enabled = true
-#
-#  count = var.enable_active_directory ? 1 : 0
-#}
+resource "rancher2_auth_config_activedirectory" "activedirectory" {
+  servers                         = var.ad_server
+  tls                             = false
+  port                            = 389
+  service_account_username        = var.ad_username
+  service_account_password        = var.ad_password
+  test_username                   = var.ad_username
+  test_password                   = var.ad_password
+  default_login_domain            = var.ad_default_login_domain
+  user_search_base                = var.ad_user_search_base
+  group_search_base               = var.ad_group_search_base
+  nested_group_membership_enabled = true
+
+  count = var.enable_active_directory ? 1 : 0
+}
 
 resource "rancher2_cloud_credential" "vsphere" {
   name        = "vSphere"

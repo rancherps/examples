@@ -6,4 +6,5 @@ Other things to note:
 
 * It installs keepalived to provide a highly-available IP
 * It depends on a functioning OS template that has cloud-init installed.  See [this repo](https://github.com/David-VTUK/Rancher-Packer) for suitable Packer build templates.  The example in this repo has been tested with openSUSE 15.3 and Ubuntu 20.04
+* Clusters are deployed with Calico as the CNI and have WireGuard encryption enabled for the overlay
 
